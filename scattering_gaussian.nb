@@ -48,10 +48,8 @@ Rotate[DensityPlot[
   PerformanceGoal -> "Quality"], 1.5*Pi]
 Print[ TimeUsed[] "secs was used to compute the results."]
 
-(*Here is an animation*)
+(*Finally a small animation for this whole theory. Press the play symbol below the slider and enjoy.*)
 (*Thanks to some dude on youtube - sorry I forgot name but please contact me if youre the one*)
-(*Finally a small animation for this whole theory. Press the play \
-symbol below the slider and enjoy.*)
 ClearAll["Global`*"]
 SaveDefinitions -> True;
 n = 1000;
