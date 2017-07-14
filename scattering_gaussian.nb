@@ -1,3 +1,4 @@
+(*Mathematica 9.0*)
 Clear["Global`*"];
 SaveDefinitions -> True;
 (*Firstly I will show a[k] is a Gaussian wave packet*)
@@ -10,13 +11,12 @@ Print[ TimeUsed[] "secs was used to compute the results."] (*You can ignore this
 
 
 (*From the graph above, we can see a[k] is Gaussian*)
-(*This is our wave which will move towards the origin from -Infinity \
-and strikes the potential step at x=0*)
+(*This is our wave which will move towards the origin from -Infinity and strikes the potential step at x=0*)
 
-(*Unfortunately I have to assume a[k] to be 1 for faster computation \
-in my machine, the resultant plots will simply be a path of that \
-gaussian packet which thus will be a straight line. If your \
-computer is powerful, you can try uncommenting relevant terms above \
+(*Unfortunately I have to assume a[k] to be 1 for faster computation
+in my machine, the resultant plots will simply be a path of that
+gaussian packet which thus will be a straight line. If your 
+computer is powerful, you can try uncommenting relevant terms above 
 and below and edit similarly wherever possible. PR are welcome!*)
 Clear["Global`*"]; \[CapitalPsi][x_] := 
  Piecewise[{{ (E^(-I k x) + E^(I k x)), x <= 0}, {E^( k x), x >=  0}}];
@@ -27,8 +27,62 @@ Integrate[g[x, k], {k, 0, 1},
  Integrate[g[x, k], {k, 1, Infinity}, 
   Assumptions -> \[Tau] \[Epsilon] Reals && \[Tau] > 0 && x >= 0]
   
-  (*This gives a conditional expression involving fresnels integrals*)
+  (*This gives a conditional expression involving fresnels integrals for the wave function.*)
   w = Integrate[E^(-I k^2 \[Tau]) E^(k x), {k, 1, \[Infinity]}, 
    Assumptions -> Reals \[Epsilon] \[Tau] && \[Tau] > 0];
 Abs[w]
 (*We took the part for t>0 which means time after the packet hits the step*)
+
+DensityPlot[%72(*The result of above expression*),{x, -80, 80}, {\[Tau], -80, 80}, PlotRange -> Full, 
+ ColorFunction -> "BlueGreenYellow", PlotLegends -> Automatic] 
+ 
+ (*This gives the density plot of the packet as a function of time. Remember t=0 means it striked the step, t<0 means before the step and t>0 means after the step*)
+ (*The above graph is rather ugly. I dont know why*)
+ (*But it can be made quite beautiful by simplifying some equations*)
+ 
+ f[k_, x_] := (E^(-I k x) + E^(I k x)) (E^(-I (k^2) \[Tau]));
+
+Rotate[DensityPlot[
+  Quiet@Abs[Integrate[f[k, x], {k, 0, 1}]], {x, -80, 80}, {\[Tau], 0, 
+   100}, PlotLegends -> Automatic, ColorFunction -> "SunsetColors", 
+  PerformanceGoal -> "Quality"], 1.5*Pi]
+Print[ TimeUsed[] "secs was used to compute the results."]
+
+(*Here is an animation*)
+(*Thanks to some dude on youtube - sorry I forgot name but please contact me if youre the one*)
+(*Finally a small animation for this whole theory. Press the play \
+symbol below the slider and enjoy.*)
+ClearAll["Global`*"]
+SaveDefinitions -> True;
+n = 1000;
+dx = 1.5/(n - 1);
+kx = 150;
+TimeSteps = 150;
+psi = Table[
+   Exp[I kx (x - 0.3) - (x - 0.3)^2/(2*0.05^2)], {x, 0, 1.5, dx}];
+dt = 5000;
+xPotInit = 1.5/2;
+xPotFinal = xPotInit + 1.5/30;
+potH = 1000;
+V = Table[
+   If[x > xPotInit && x < xPotFinal, potH UnitStep[x], 0], {x, 0, 1.5,
+     dx}];
+\[Tau] = 1/(4 dx^2);
+tauvec = Table[\[Tau], {n - 1}];
+For[tt = 1, tt <= TimeSteps, tt++, 
+ psi = LinearSolve[
+   SparseArray[{Band[{1, 2}] -> tauvec, 
+     Band[{1, 1}] -> I dt - 2  \[Tau] - V, 
+     Band[{2, 1}] -> 
+      tauvec}], (I dt + 2 \[Tau] + V) psi - \[Tau] Table[
+      2 psi[[xx]], {xx, 1, n}]]; PsiN[tt] = psi/Norm[psi];]
+all = Join[Table[Abs[PsiN[i]], {i, 1, TimeSteps, 1}]]; allreal = 
+ Join[Table[Re[PsiN[i]], {i, 1, TimeSteps, 1}]];
+pr = .02;
+Manipulate[
+ Show[ListLinePlot[all[[t, ;;]]^2, PlotRange -> {{0, n}, {-pr, pr}}, 
+   Axes -> {True, False}, Ticks -> None], 
+  ListLinePlot[.95 pr*V/Max[V], PlotStyle -> { Black, Thick}]], {t, 1,
+   TimeSteps, 1}]
+(*Print[ TimeUsed[] "secs was used to compute the results."]*)
+
