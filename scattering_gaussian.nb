@@ -1,0 +1,34 @@
+Clear["Global`*"];
+SaveDefinitions -> True;
+(*Firstly I will show a[k] is a Gaussian wave packet*)
+
+\[Psi][0] := (1/Pi^2)^(1/4) E^(I  x)  E^(-0.5*(x)^2);
+a[k_] := Integrate[E^(I k x) \[Psi][0], {x, -Infinity, Infinity}];
+a = Abs[a[k]];
+Plot[a, {k, -20, 20}, PlotRange -> Full, Filling -> Axis]
+Print[ TimeUsed[] "secs was used to compute the results."] (*You can ignore this line*)
+
+
+(*From the graph above, we can see a[k] is Gaussian*)
+(*This is our wave which will move towards the origin from -Infinity \
+and strikes the potential step at x=0*)
+
+(*Unfortunately I have to assume a[k] to be 1 for faster computation \
+in my machine, the resultant plots will simply be a path of that \
+gaussian packet which thus will be a straight line. If your \
+computer is powerful, you can try uncommenting relevant terms above \
+and below and edit similarly wherever possible. PR are welcome!*)
+Clear["Global`*"]; \[CapitalPsi][x_] := 
+ Piecewise[{{ (E^(-I k x) + E^(I k x)), x <= 0}, {E^( k x), x >=  0}}];
+g[x_, k_] := \[CapitalPsi][x](*a[
+  k]*)(E^(-I (k^2) \[Tau])); (*This means I took a[k] to be one*)
+Integrate[g[x, k], {k, 0, 1}, 
+  Assumptions -> \[Tau] \[Epsilon] Reals && \[Tau] > 0 && x <=  0] + 
+ Integrate[g[x, k], {k, 1, Infinity}, 
+  Assumptions -> \[Tau] \[Epsilon] Reals && \[Tau] > 0 && x >= 0]
+  
+  (*This gives a conditional expression involving fresnels integrals*)
+  w = Integrate[E^(-I k^2 \[Tau]) E^(k x), {k, 1, \[Infinity]}, 
+   Assumptions -> Reals \[Epsilon] \[Tau] && \[Tau] > 0];
+Abs[w]
+(*We took the part for t>0 which means time after the packet hits the step*)
