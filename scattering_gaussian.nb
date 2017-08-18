@@ -40,7 +40,7 @@ DensityPlot[%72(*The result of above expression*),{x, -80, 80}, {\[Tau], -80, 80
  (*The above graph is rather ugly. I dont know why*)
  (*But it can be made quite beautiful by simplifying some equations*)
  
- f[k_, x_] := (E^(-I k x) + E^(I k x)) (E^(-I (k^2) \[Tau]));
+ f[k_, x_] := (E^(-I k x) + E^(I k x)) (E^(-I (k^2) \[Tau])); (*I did something wrong here or in the step below because the subsequent plot needs to be rotated. This will be fixed soon*)
 
 Rotate[DensityPlot[
   Quiet@Abs[Integrate[f[k, x], {k, 0, 1}]], {x, -80, 80}, {\[Tau], 0, 
