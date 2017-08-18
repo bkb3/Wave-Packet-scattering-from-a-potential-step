@@ -36,11 +36,13 @@ Abs[w]
 DensityPlot[%72(*The result of above expression*),{x, -80, 80}, {\[Tau], -80, 80}, PlotRange -> Full, 
  ColorFunction -> "BlueGreenYellow", PlotLegends -> Automatic] 
  
- (*This gives the density plot of the packet as a function of time. Remember t=0 means it striked the step, t<0 means before the step and t>0 means after the step*)
+ (*This gives the density plot of the packet as a function of time. Remember t=0 means it striked the step, 
+ t<0 means before the step and t>0 means after the step*)
  (*The above graph is rather ugly. I dont know why*)
  (*But it can be made quite beautiful by simplifying some equations*)
  
- f[k_, x_] := (E^(-I k x) + E^(I k x)) (E^(-I (k^2) \[Tau])); (*I did something wrong here or in the step below because the subsequent plot needs to be rotated. This will be fixed soon*)
+ f[k_, x_] := (E^(-I k x) + E^(I k x)) (E^(-I (k^2) \[Tau])); (*I did something wrong here or in the step below because the
+ subsequent plot needs to be rotated. This will be fixed soon*)
 
 Rotate[DensityPlot[
   Quiet@Abs[Integrate[f[k, x], {k, 0, 1}]], {x, -80, 80}, {\[Tau], 0, 
